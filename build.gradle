@@ -1,0 +1,64 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.12'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+group = 'com.hyunn'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// GSON 의존성
+	implementation 'com.google.code.gson:gson:2.8.7'
+
+	// thymeleaf 의존성
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	// OAuth 2.0 관련 의존성
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	// s3 의존성
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+// Default는 dev 로 지정
+ext.profile = (!project.hasProperty('profile') || !profile) ? 'prod' : profile
+
+// 리소스 폴더 지정
+sourceSets {
+	main {
+		resources {
+			srcDirs "src/main/resources", "src/main/resources-${profile}"
+		}
+	}
+}
+
+tasks {
+	processResources {
+		duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
+	}
+}
